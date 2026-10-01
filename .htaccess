@@ -1,5 +1,7 @@
-# Serve the existing admin dashboard at /admin and /admin/.
+# Serve existing pages at their navigation URLs.
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteRule ^admin/?$ admin.html [L]
+    RewriteRule ^products?/?$ products.html [L]
+    RewriteRule ^contact/?$ contact.html [L]
 </IfModule>
