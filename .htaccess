@@ -1,0 +1,5 @@
+# Serve the existing admin dashboard at /admin and /admin/.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^admin/?$ admin.html [L]
+</IfModule>
