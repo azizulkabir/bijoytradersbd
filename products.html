@@ -109,13 +109,14 @@
 
     <script>
         const firebaseConfig = {
-            apiKey: "AIzaSyAOLFiqATUm082f4jhMizB1ELs_bdb45nQ",
+            apiKey: "AIzaSyAOLFiqATUmO82f4jhMizB1ELs_bdB45nQ",
             authDomain: "bijoytraders-f3d96.firebaseapp.com",
             databaseURL: "https://bijoytraders-f3d96-default-rtdb.firebaseio.com",
             projectId: "bijoytraders-f3d96",
             storageBucket: "bijoytraders-f3d96.firebasestorage.app",
             messagingSenderId: "1037585773312",
-            appId: "1:1037585773312:web:a1b2c3d4e5f67890"
+            appId: "1:1037585773312:web:bda32f3643172d4d4e79e5",
+            measurementId: "G-NBEPGM8LW5"
         };
 
         if (!firebase.apps.length) {
@@ -167,9 +168,28 @@
             document.getElementById('loginError').classList.add('hidden');
         }
 
+
+        function showLoginError(error, element) {
+            const messages = {
+                'auth/invalid-api-key': 'Firebase configuration সঠিক নয়।',
+                'auth/network-request-failed': 'ইন্টারনেট বা Firebase সংযোগে সমস্যা। আবার চেষ্টা করুন।',
+                'auth/too-many-requests': 'অনেকবার চেষ্টা করা হয়েছে। কিছুক্ষণ পরে আবার চেষ্টা করুন।',
+                'auth/user-disabled': 'এই account বন্ধ করা হয়েছে।',
+                'auth/operation-not-allowed': 'Firebase-এ Email/Password login চালু নেই।',
+                'auth/unauthorized-domain': 'এই domain-এর জন্য Firebase login অনুমোদিত নয়।',
+                'auth/wrong-password': 'ইমেইল অথবা পাসওয়ার্ড সঠিক নয়।',
+                'auth/user-not-found': 'ইমেইল অথবা পাসওয়ার্ড সঠিক নয়।',
+                'auth/invalid-credential': 'ইমেইল অথবা পাসওয়ার্ড সঠিক নয়।',
+                'auth/invalid-login-credentials': 'ইমেইল অথবা পাসওয়ার্ড সঠিক নয়।',
+                'auth/invalid-email': 'সঠিক ইমেইল ঠিকানা লিখুন।'
+            };
+            element.textContent = messages[error.code] || ('লগইন ব্যর্থ হয়েছে। Error: ' + (error.code || 'unknown'));
+            element.classList.remove('hidden');
+        }
+
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const email = document.getElementById('adminEmail').value.trim();
+            const email = document.getElementById('adminEmail').value.trim().toLowerCase();
             const password = document.getElementById('adminPassword').value;
             const errorElement = document.getElementById('loginError');
             const submitBtn = document.getElementById('loginSubmitBtn');
@@ -185,12 +205,7 @@
                     window.location.href = 'admin.html';
                 })
                 .catch((error) => {
-                    if (email === "admin@bijoytraders.com" && password === "123456") {
-                        localStorage.setItem('isAdminLoggedIn', 'true');
-                        window.location.href = 'admin.html';
-                    } else {
-                        errorElement.classList.remove('hidden');
-                    }
+                    showLoginError(error, errorElement);
                 })
                 .finally(() => {
                     submitBtn.disabled = false;
