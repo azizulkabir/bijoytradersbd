@@ -331,6 +331,25 @@
                 });
         });
 
+
+        function showLoginError(error, element) {
+            const messages = {
+                'auth/invalid-api-key': 'Firebase configuration সঠিক নয়।',
+                'auth/network-request-failed': 'ইন্টারনেট বা Firebase সংযোগে সমস্যা। আবার চেষ্টা করুন।',
+                'auth/too-many-requests': 'অনেকবার চেষ্টা করা হয়েছে। কিছুক্ষণ পরে আবার চেষ্টা করুন।',
+                'auth/user-disabled': 'এই account বন্ধ করা হয়েছে।',
+                'auth/operation-not-allowed': 'Firebase-এ Email/Password login চালু নেই।',
+                'auth/unauthorized-domain': 'এই domain-এর জন্য Firebase login অনুমোদিত নয়।',
+                'auth/wrong-password': 'ইমেইল অথবা পাসওয়ার্ড সঠিক নয়।',
+                'auth/user-not-found': 'ইমেইল অথবা পাসওয়ার্ড সঠিক নয়।',
+                'auth/invalid-credential': 'ইমেইল অথবা পাসওয়ার্ড সঠিক নয়।',
+                'auth/invalid-login-credentials': 'ইমেইল অথবা পাসওয়ার্ড সঠিক নয়।',
+                'auth/invalid-email': 'সঠিক ইমেইল ঠিকানা লিখুন।'
+            };
+            element.textContent = messages[error.code] || ('লগইন ব্যর্থ হয়েছে। Error: ' + (error.code || 'unknown'));
+            element.classList.remove('hidden');
+        }
+
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const email = document.getElementById('adminEmail').value.trim().toLowerCase();
@@ -377,18 +396,18 @@
                     // If the user enters the new email but Firebase still has only
                     // the old demo account, authenticate the old account using the
                     // same password and migrate it to the new email.
-                    if (email === CURRENT_ADMIN_EMAIL) {
+                    if (email === CURRENT_ADMIN_EMAIL && ['auth/user-not-found', 'auth/wrong-password', 'auth/invalid-credential', 'auth/invalid-login-credentials'].includes(error.code)) {
                         return auth.signInWithEmailAndPassword(LEGACY_ADMIN_EMAIL, password)
                             .then(() => migrateLegacyAdminAccount())
                             .then(completeAdminLogin)
                             .catch((migrationError) => {
                                 console.error('Admin login/migration error:', migrationError);
-                                errorElement.classList.remove('hidden');
+                                showLoginError(migrationError, errorElement);
                             });
                     }
 
                     console.error('Admin login error:', error);
-                    errorElement.classList.remove('hidden');
+                    showLoginError(error, errorElement);
                 })
                 .finally(() => {
                     submitBtn.disabled = false;
