@@ -4,6 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bijoy Traders - ম্যানেজমেন্ট ড্যাশবোর্ড</title>
+    <style id="number-input-spinner-style">
+        /* Hide number spinners while preserving numeric input behavior. */
+        input[type="number"] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Secure Data Reset Modal -->
     <div id="dataResetPasswordModal" class="hidden fixed inset-0 bg-black/60 flex justify-center items-center p-4 z-[120] backdrop-blur-sm">
