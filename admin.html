@@ -50,6 +50,12 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <style>
+        /* Keep invoice dates on one line on screen and in print. */
+        #invoicePrintArea th:nth-child(2),
+        #invoicePrintArea td:nth-child(2) {
+            white-space: nowrap;
+        }
+
         /* Print Styles for Perfect A4 Alignment */
         @media print {
             body * {
