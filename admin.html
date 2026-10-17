@@ -1406,6 +1406,17 @@
             return num.toString();
         }
 
+        function formatOutputDate(value) {
+            if (value instanceof Date) {
+                if (Number.isNaN(value.getTime())) return '';
+                return String(value.getDate()).padStart(2, '0') + '-' +
+                    String(value.getMonth() + 1).padStart(2, '0') + '-' +
+                    String(value.getFullYear()).slice(-2);
+            }
+            const match = String(value || '').match(/^(\d{4})-(\d{2})-(\d{2})(?:T|$)/);
+            return match ? match[3] + '-' + match[2] + '-' + match[1].slice(-2) : '';
+        }
+
         function formatCurrency(num) {
             const value = Number(num || 0);
             const formatted = new Intl.NumberFormat('en-IN', {
@@ -1734,11 +1745,11 @@
             document.getElementById('invCustomerName').textContent = customer;
             document.getElementById('invCustomerAddressDisplay').textContent = 'Address: ' + customerAddress;
             document.getElementById('invProjectName').textContent = 'Project: ' + (selectedProject ? selectedProject : 'সকল প্রজেক্ট');
-            document.getElementById('invDateRange').textContent = 'তারিখ: ' + startDate + ' হতে ' + endDate;
+            document.getElementById('invDateRange').textContent = 'তারিখ: ' + formatOutputDate(startDate) + ' হতে ' + formatOutputDate(endDate);
             document.getElementById('invNo').textContent = 'Invoice No: ' + invoiceNo;
 
             const today = new Date();
-            document.getElementById('invDate').textContent = 'তারিখ: ' + toBanglaNum(today.getDate()) + '/' + toBanglaNum(today.getMonth() + 1) + '/' + toBanglaNum(today.getFullYear());
+            document.getElementById('invDate').textContent = 'তারিখ: ' + toBanglaNum(formatOutputDate(today));
 
             const tbody = document.getElementById('invTableBody');
             tbody.innerHTML = '';
@@ -1752,7 +1763,7 @@
                 tbody.innerHTML += `
                     <tr class="border-b border-slate-100">
                         <td class="p-3 text-center font-medium">${toBanglaNum(index + 1)}</td>
-                        <td class="p-3 text-slate-600">${(s.date || '').split('T')[0]}</td>
+                        <td class="p-3 text-slate-600">${formatOutputDate(s.date)}</td>
                         <td class="p-3 font-medium">${s.project || '-'}</td>
                         <td class="p-3 font-semibold text-slate-800">${s.productName || '-'}</td>
                         <td class="p-3">${s.challanNo || '-'}</td>
@@ -1814,7 +1825,7 @@
                 tbody.innerHTML += `
                     <tr class="border-b border-slate-200">
                         <td class="p-3 text-center font-semibold">${toBanglaNum(index + 1)}</td>
-                        <td class="p-3 font-medium">${(sale.date || '').split('T')[0] || '-'}</td>
+                        <td class="p-3 font-medium">${formatOutputDate(sale.date) || '-'}</td>
                         <td class="p-3 font-semibold text-slate-800">${historyEscape(companyName || '-')}</td>
                         <td class="p-3 text-center font-bold">${toBanglaNum(qty)}</td>
                         <td class="p-3 text-right font-bold">${formatCurrency(amount)}</td>
@@ -1823,8 +1834,8 @@
             });
             if (!sortedSales.length) tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-slate-400">নির্বাচিত সময়/কোম্পানির মধ্যে কোনো বিক্রির রেকর্ড পাওয়া যায়নি</td></tr>';
             const today = new Date();
-            document.getElementById('salesHistoryGeneratedDate').textContent = 'তারিখ: ' + toBanglaNum(today.getDate()) + '/' + toBanglaNum(today.getMonth() + 1) + '/' + toBanglaNum(today.getFullYear());
-            document.getElementById('salesHistoryDateRange').textContent = 'সময়কাল: ' + startDate + ' হতে ' + endDate;
+            document.getElementById('salesHistoryGeneratedDate').textContent = 'তারিখ: ' + toBanglaNum(formatOutputDate(today));
+            document.getElementById('salesHistoryDateRange').textContent = 'সময়কাল: ' + formatOutputDate(startDate) + ' হতে ' + formatOutputDate(endDate);
             document.getElementById('salesHistoryCompany').textContent = 'Company Name: ' + (company || 'All Companies');
             document.getElementById('salesHistoryTotalQty').textContent = toBanglaNum(totalQty);
             document.getElementById('salesHistoryTotalAmount').textContent = formatCurrency(totalAmount);
@@ -2017,7 +2028,7 @@
                 tbody.innerHTML += `
                     <tr class="border-b border-slate-200">
                         <td class="p-3 text-center font-semibold">${toBanglaNum(index + 1)}</td>
-                        <td class="p-3 font-medium">${getExpenseDate(ex) || '-'}</td>
+                        <td class="p-3 font-medium">${formatOutputDate(getExpenseDate(ex)) || '-'}</td>
                         <td class="p-3 font-semibold">${getExpenseDetails(ex)}</td>
                         <td class="p-3 text-right font-bold text-rose-600">${formatCurrency(amount)}</td>
                     </tr>`;
@@ -2027,7 +2038,7 @@
                 tbody.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-400">নির্বাচিত সময়ের মধ্যে কোনো খরচের রেকর্ড নেই</td></tr>';
             }
 
-            document.getElementById('expenseStmtDateRange').textContent = 'সময়কাল: ' + startDate + ' হতে ' + endDate;
+            document.getElementById('expenseStmtDateRange').textContent = 'সময়কাল: ' + formatOutputDate(startDate) + ' হতে ' + formatOutputDate(endDate);
             document.getElementById('expenseStmtTotal').textContent = formatCurrency(totalExpense);
         }
 
@@ -2118,14 +2129,14 @@
             tbody.innerHTML = rows.map((p,i) => {
                 const sold = stockSoldQty(p.id), remaining = Number(p.stock || 0);
                 return `<tr class="border-b border-slate-200">
-                    <td class="p-3">${i+1}</td><td class="p-3">${historyEscape((p.createdAt || p.date || '').split('T')[0] || '—')}</td>
+                    <td class="p-3">${i+1}</td><td class="p-3">${historyEscape(formatOutputDate(p.createdAt || p.date) || '—')}</td>
                     <td class="p-3">${historyEscape(p.companyName || '—')}</td><td class="p-3">${historyEscape(p.name || '—')}</td>
                     <td class="p-3 text-right">${formatCurrency(p.buyPrice)}</td><td class="p-3 text-right">${toBanglaNum(remaining+sold)}</td>
                     <td class="p-3 text-right">${toBanglaNum(sold)}</td><td class="p-3 text-right font-bold">${toBanglaNum(remaining)}</td>
                     <td class="no-print p-3"><button type="button" data-edit-stock="${historyEscape(p.id)}" class="bg-amber-600 text-white px-3 py-1.5 rounded-lg">Edit</button></td></tr>`;
             }).join('') || '<tr><td colspan="9" class="p-6 text-center text-slate-400">নির্বাচিত কোম্পানি ও সময়ের মধ্যে কোনো স্টক ইন রেকর্ড নেই</td></tr>';
             document.getElementById('stockStmtCompany').textContent = 'Company: ' + (company || 'সকল কোম্পানি');
-            document.getElementById('stockStmtDateRange').textContent = 'সময়কাল: ' + startDate + ' হতে ' + endDate;
+            document.getElementById('stockStmtDateRange').textContent = 'সময়কাল: ' + formatOutputDate(startDate) + ' হতে ' + formatOutputDate(endDate);
             document.getElementById('stockStmtTotalSold').textContent = toBanglaNum(totalSold);
             document.getElementById('stockStmtRemaining').textContent = toBanglaNum(companyProducts.reduce((sum,p) => sum + Number(p.stock || 0), 0));
             document.getElementById('stockStatementPrintArea').classList.remove('hidden');
@@ -2242,7 +2253,7 @@
             }
 
             document.getElementById('transportBillName').textContent = transportName;
-            document.getElementById('transportBillDateRange').textContent = 'সময়কাল: ' + startDate + ' হতে ' + endDate;
+            document.getElementById('transportBillDateRange').textContent = 'সময়কাল: ' + formatOutputDate(startDate) + ' হতে ' + formatOutputDate(endDate);
 
             const tbody = document.getElementById('transportBillTableBody');
             tbody.innerHTML = '';
@@ -2254,7 +2265,7 @@
                 tbody.innerHTML += `
                     <tr class="border-b border-slate-200">
                         <td class="p-3 text-center font-semibold">${toBanglaNum(index + 1)}</td>
-                        <td class="p-3 text-slate-600 font-medium">${(s.date || '').split('T')[0]}</td>
+                        <td class="p-3 text-slate-600 font-medium">${formatOutputDate(s.date)}</td>
                         <td class="p-3 font-semibold text-slate-800">${s.project || '-'}</td>
                         <td class="p-3 text-center font-semibold">${s.vehicleNumber || '-'}</td>
                         <td class="p-3 text-right font-bold">${formatCurrency(fare)}</td>
@@ -2264,7 +2275,7 @@
 
             document.getElementById('transportBillTotal').textContent = formatCurrency(totalFare);
             const today = new Date();
-            document.getElementById('transportBillGeneratedDate').textContent = 'তারিখ: ' + toBanglaNum(today.getDate()) + '/' + toBanglaNum(today.getMonth() + 1) + '/' + toBanglaNum(today.getFullYear());
+            document.getElementById('transportBillGeneratedDate').textContent = 'তারিখ: ' + toBanglaNum(formatOutputDate(today));
             document.getElementById('transportBillingModal').classList.remove('hidden');
         });
 
@@ -2274,7 +2285,7 @@
             const startDate = document.getElementById('stmtStartDate').value;
             const endDate = document.getElementById('stmtEndDate').value;
 
-            document.getElementById('stmtHeaderDates').textContent = 'সময়কাল: ' + startDate + ' হতে ' + endDate;
+            document.getElementById('stmtHeaderDates').textContent = 'সময়কাল: ' + formatOutputDate(startDate) + ' হতে ' + formatOutputDate(endDate);
 
             let inflow = 0;
             let outflow = 0;
@@ -2331,7 +2342,7 @@
             tableRows.forEach(r => {
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50 border-b border-slate-100">
-                        <td class="p-2.5 border text-center font-medium">${r.date}</td>
+                        <td class="p-2.5 border text-center font-medium">${formatOutputDate(r.date)}</td>
                         <td class="p-2.5 border font-semibold">${r.desc}</td>
                         <td class="p-2.5 border text-center font-bold ${r.type === 'জমা' ? 'text-emerald-700' : 'text-rose-600'}">${r.type}</td>
                         <td class="p-2.5 border text-right text-emerald-700 font-bold">${r.in ? formatCurrency(r.in) : '-'}</td>
