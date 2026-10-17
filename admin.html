@@ -1735,7 +1735,7 @@
                 const matchDate = sDate >= startDate && sDate <= endDate;
                 const matchProject = selectedProject ? (s.project && s.project.trim() === selectedProject) : true;
                 return matchCustomer && matchDate && matchProject;
-            });
+            }).sort((a, b) => (a.date || '').split('T')[0].localeCompare((b.date || '').split('T')[0]));
 
             if (filteredSales.length === 0) {
                 alert('উক্ত সময় এবং সিলেক্ট করা প্রজেক্টের মধ্যে কোনো বিক্রির রেকর্ড পাওয়া যায়নি!');
