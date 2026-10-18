@@ -4,7 +4,7 @@
 
     # Redirect browser requests for public HTML pages to extensionless URLs.
     # THE_REQUEST avoids redirecting internal rewrites back to these files.
-    RewriteCond %{THE_REQUEST} \s/+[^ ?]*\.html[\s?] [NC]
+    RewriteCond %{THE_REQUEST} \s/+(about|products|contact)\.html[\s?] [NC]
     RewriteRule ^(about|products|contact)\.html$ /$1 [R=301,L]
 
     RewriteRule ^admin/?$ admin.html [L]
