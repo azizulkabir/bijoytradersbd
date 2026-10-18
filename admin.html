@@ -1251,7 +1251,7 @@
         auth.onAuthStateChanged((user) => {
             if (!user) {
                 localStorage.removeItem('isAdminLoggedIn');
-                window.location.href = 'index.html';
+                window.location.href = '/';
                 return;
             }
             initDashboard();
@@ -1347,7 +1347,7 @@
                 })
                 .then(() => {
                     localStorage.removeItem('isAdminLoggedIn');
-                    window.location.href = 'index.html';
+                    window.location.href = '/';
                 })
                 .catch(err => {
                     console.error('Password change error:', err);
@@ -1367,7 +1367,7 @@
         function logoutAdmin() {
             auth.signOut().then(() => {
                 localStorage.removeItem('isAdminLoggedIn');
-                window.location.href = 'index.html';
+                window.location.href = '/';
             });
         }
 
@@ -2419,7 +2419,7 @@
                 })
                 .then(() => {
                     localStorage.removeItem('isAdminLoggedIn');
-                    window.location.href = 'index.html';
+                    window.location.href = '/';
                 })
                 .catch(err => {
                     console.error('Secure data reset error:', err);
